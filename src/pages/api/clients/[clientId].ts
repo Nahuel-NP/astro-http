@@ -42,10 +42,10 @@ export const DELETE: APIRoute = async ({ params }) => {
 
   const { clientId } = params;
 
-  const {rowsAffected} = await db.delete(Clients).where(eq(Clients.id, Number(clientId)));
+  const { rowsAffected } = await db.delete(Clients).where(eq(Clients.id, Number(clientId)));
 
-  if (rowsAffected>0) {
-    
+  if (rowsAffected > 0) {
+
     return new Response(JSON.stringify({
       msg: 'Deleted'
     }), {
@@ -57,7 +57,38 @@ export const DELETE: APIRoute = async ({ params }) => {
   return new Response(JSON.stringify({
     msg: `CLient with id ${clientId} not found`
   }), {
-    status: 200, headers: {
+    status: 404, headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+
+
+export const GET: APIRoute = async ({ params }) => {
+
+  const { clientId } = params;
+
+
+
+  const users = await db.select().from(Clients).where(eq(Clients.id, Number(clientId)));
+
+  if (users.length > 0) {
+
+    return new Response(JSON.stringify(
+      users.at(0)
+    ), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+  return new Response(JSON.stringify(
+    { msg: `CLient with id ${clientId} not found` }
+  ), {
+    status: 404,
+    headers: {
       'Content-Type': 'application/json'
     }
   })
