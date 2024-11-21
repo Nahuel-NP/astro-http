@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import confetti from 'canvas-confetti'
-import { ref } from 'vue';
+import { ref,watch } from 'vue';
 
 
 interface Props {
@@ -27,6 +27,18 @@ const props = defineProps<Props>()
 const likeCount = ref(0)
 const likeClicks = ref(0)
 const isLoading = ref(true)
+
+watch(likeCount,()=>{
+  
+  fetch(`/api/posts/likes/${props.postId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ likes: likeClicks.value })
+  })
+  likeClicks.value = 0
+})
 
 const likePost = () => {
   likeCount.value++;
@@ -46,7 +58,7 @@ const getCurrentLikes = async ()=>{
   }
 
   const data = await resp.json();
-  console.log("🚀 ~ getCurrentLikes ~ data:", data)
+
   
   likeCount.value = data.likes;
   isLoading.value = false
