@@ -6,13 +6,14 @@
   <button v-else-if="likeCount === 0" @click="likePost">
     Like this post
   </button>
-  <button v-else>
+  <button v-else @click="likePost">
     Likes <span>{{ likeCount }}</span>
   </button>
 </template>
 
 
 <script setup lang="ts">
+import confetti from 'canvas-confetti'
 import { ref } from 'vue';
 
 
@@ -28,7 +29,13 @@ const likeClicks = ref(0)
 const isLoading = ref(true)
 
 const likePost = () => {
-  console.log('+1 Like')
+  likeCount.value++;
+  likeClicks.value++;
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
 }
 
 const getCurrentLikes = async ()=>{
