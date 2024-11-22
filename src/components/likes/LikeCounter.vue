@@ -14,7 +14,8 @@
 
 <script setup lang="ts">
 import confetti from 'canvas-confetti'
-import { ref,watch } from 'vue';
+import debounce from 'lodash.debounce'
+import { ref, watch } from 'vue';
 
 
 interface Props {
@@ -28,8 +29,8 @@ const likeCount = ref(0)
 const likeClicks = ref(0)
 const isLoading = ref(true)
 
-watch(likeCount,()=>{
-  
+watch(likeCount, debounce(() => {
+
   fetch(`/api/posts/likes/${props.postId}`, {
     method: 'PUT',
     headers: {
@@ -38,7 +39,7 @@ watch(likeCount,()=>{
     body: JSON.stringify({ likes: likeClicks.value })
   })
   likeClicks.value = 0
-})
+}, 500))
 
 const likePost = () => {
   likeCount.value++;
@@ -50,7 +51,7 @@ const likePost = () => {
   });
 }
 
-const getCurrentLikes = async ()=>{
+const getCurrentLikes = async () => {
 
   const resp = await fetch(`/api/posts/likes/${props.postId}`)
   if (!resp.ok) {
@@ -59,7 +60,7 @@ const getCurrentLikes = async ()=>{
 
   const data = await resp.json();
 
-  
+
   likeCount.value = data.likes;
   isLoading.value = false
 }
