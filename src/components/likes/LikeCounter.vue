@@ -13,6 +13,7 @@
 
 
 <script setup lang="ts">
+import { actions } from 'astro:actions';
 import confetti from 'canvas-confetti'
 import debounce from 'lodash.debounce'
 import { ref, watch } from 'vue';
@@ -41,9 +42,18 @@ watch(likeCount, debounce(() => {
   likeClicks.value = 0
 }, 500))
 
-const likePost = () => {
+const likePost = async () => {
   likeCount.value++;
   likeClicks.value++;
+
+  const { data, error } = await actions.getGreeting({ name: 'World', age: 1, isActive: true })
+  
+  if (error) {
+    console.error(error)
+    return alert('Failed to like post')
+  } 
+  console.log("🚀 ~ likePost ~ data:", data)
+  
   confetti({
     particleCount: 100,
     spread: 70,
